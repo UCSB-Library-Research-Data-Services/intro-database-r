@@ -1,6 +1,5 @@
-# Integrating SQL into R analytical workflows using dbplyr 
+# Integrating SQL into R analytical workflows using duckDB & dbplyr 
 
-Workshop on integrating SQL into R analytical workflows using dbplyr 
 
 When: 7th March 2024, 1700-1830 UTC  (convert to local time)
 
