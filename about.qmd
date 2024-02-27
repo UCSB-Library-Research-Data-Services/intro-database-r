@@ -6,7 +6,7 @@ title: "About RDS"
 
 -   Consultations
 -   Long-term engagements
--   Instructional workshops.
+-   Instructional workshops
 
 Our team offers support across the research data lifecycle, from pre-project planning to post-project archival, connecting researchers with both locally- and externally-provided curation services. Our goal is to ensure that all research data is well-described, FAIR (Findable, Accessible, Interoperable, Reusable), and sustainably preservable, and that researchers receive scholarly credit for sharing and publishing data.
 
