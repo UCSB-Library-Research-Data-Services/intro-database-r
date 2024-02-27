@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Integrating SQL into R analytical workflows using duckDB & dbplyr",
+    "section": "",
+    "text": "Why consider a database\nExample of the birds dataset with multiple csv files and relationships\nPros & Cons of databases\nServer vs personal database\ndbplyr to connect to the R world"
+  },
+  {
+    "objectID": "index.html#slides",
+    "href": "index.html#slides",
+    "title": "Integrating SQL into R analytical workflows using duckDB & dbplyr",
+    "section": "",
+    "text": "Why consider a database\nExample of the birds dataset with multiple csv files and relationships\nPros & Cons of databases\nServer vs personal database\ndbplyr to connect to the R world"
+  },
+  {
+    "objectID": "index.html#hands-on",
+    "href": "index.html#hands-on",
+    "title": "Integrating SQL into R analytical workflows using duckDB & dbplyr",
+    "section": "Hands-on",
+    "text": "Hands-on\n\nHow to connect to a database from R\nHow to query a database using dbplyr\nHow to see the SQL code behind a tidyverse workflow\nHow to directly use SQL from R\n\nWrap-up"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About RDS",
+    "section": "",
+    "text": "Research Data Services (RDS) helps UCSB researchers manage and preserve their research data through:\n\nConsultations\nLong-term engagements\nInstructional workshops.\n\nOur team offers support across the research data lifecycle, from pre-project planning to post-project archival, connecting researchers with both locally- and externally-provided curation services. Our goal is to ensure that all research data is well-described, FAIR (Findable, Accessible, Interoperable, Reusable), and sustainably preservable, and that researchers receive scholarly credit for sharing and publishing data.\nContact us if you have any questions: rds@library.ucsb.edu"
+  }
+]
