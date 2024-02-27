@@ -1,0 +1,23 @@
+/*-- scss:defaults --*/
+
+// Colors
+$navy: #003660;
+$gold: #FEBC11;
+$gray: #111517;
+$light-gray: #DCE1E5;
+$white: #FFFFFF;
+$sea-green: #09847A;
+$coral: #EF5645;
+$sandstone: #C9BF9D;
+$clay: #faf8f4; 
+$mist: #9CBEBE;
+
+// Base document colors
+$navbar-bg: $sea-green; // navbar
+$navbar-fg: $white; // navbar foreground elements
+$navbar-hl: $gold; // highlight color when hovering over navbar links
+$sidebar-bg: $clay; // navbar
+$body-bg: $clay; // page background 
+$body-color: $gray; // page text 
+$footer-bg: $navy; // footer 
+$link-color: $coral; // hyperlinks 

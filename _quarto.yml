@@ -1,0 +1,33 @@
+project:
+  type: website
+
+website:
+  title: "integrating SQL into R analytical workflows using duckDB & dbplyr"
+
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: about.qmd
+        text: "About RDS"
+    tools:
+      - icon: github
+        menu:
+          - text: Website Code
+            url:  https://github.com/brunj7/intro-database-r
+          - text: Report an issue
+            url:  https://github.com/brunj7/intro-database-r/issues
+
+        
+format:
+  html:
+    theme: 
+      - spacelab
+      - rdsstyles.scss
+    css: styles.css
+    toc: true
+    include-after-body: footer.html
+
+execute:
+  freeze: auto
+

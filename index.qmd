@@ -1,0 +1,23 @@
+---
+title: "Integrating SQL into R analytical workflows using duckDB & dbplyr"
+---
+
+## Slides 
+
+- Why consider a database
+- Example of the birds dataset with multiple csv files and relationships
+- Pros & Cons of databases
+- Server vs personal database
+- dbplyr to connect to the R world
+
+## Hands-on
+
+- How to connect to a database from `R`
+- How to query a database using `dbplyr`
+- How to see the SQL code behind a tidyverse workflow
+- How to directly use SQL from R
+
+Wrap-up
+
+
+
