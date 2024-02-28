@@ -1,0 +1,21 @@
+---
+title: "Hands-on DuckDB & dplyr"
+---
+
+## Let's connect to our first database
+
+Loading the necessary packages. DuckDB has its own R package that is mostly a wrapper around dbplyr
+
+```{r}
+library(tidyverse)
+# install.packages("duckdb")
+library(duckdb) 
+```
+
+
+Create an empty database and save it to disk
+
+```{r}
+con <- dbConnect(duckdb::duckdb(), dbdir = "birds.duckdb", read_only = FALSE)
+```
+

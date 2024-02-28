@@ -8,6 +8,8 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: hands-on.qmd
+        text: Hands-on
       - href: about.qmd
         text: "About RDS"
     tools:
