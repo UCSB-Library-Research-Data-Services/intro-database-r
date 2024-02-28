@@ -12,3 +12,6 @@ This workshop will cover these main points:
 - Introduce concepts of a database and discuss why you might want to have/want to use one
 - How to integrate the use of a database into an R analytical workflow
 - Hands-on exercise using duckDB, dbplyr and how it can be used to learn some SQL basics
+
+
+![](img/sortee_workshop_flyer.jpg)
