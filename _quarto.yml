@@ -2,7 +2,7 @@ project:
   type: website
 
 website:
-  title: "integrating SQL into R analytical workflows using duckDB & dbplyr"
+  title: "Integrating SQL into R analytical workflows using duckDB & dbplyr"
 
   navbar:
     left:
