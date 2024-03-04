@@ -1,21 +1,161 @@
 ---
 title: "Hands-on DuckDB & dplyr"
+execute:
+  warning: false
 ---
 
-## Let's connect to our first database
 
-Loading the necessary packages. DuckDB has its own R package that is mostly a wrapper around dbplyr
+Loading the necessary packages. DuckDB has its own R package that is mostly a wrapper around dbplyr and DBI
 
 ```{r}
 library(tidyverse)
-# install.packages("duckdb")
-library(duckdb) 
+library(dbplyr)       # to query databases in a tidyverse style manner
+library(DBI)          # to connect to databases
+# install.packages("duckdb")  # install this package to get duckDB installed on your computer
+library(duckdb)       # Specific to duckDB
 ```
 
 
-Create an empty database and save it to disk
+## The dataset
+
+ARCTIC SHOREBIRD DEMOGRAPHICS NETWORK  <https://doi.org/10.18739/A2222R68W>{target="_blank"}
+
+Dataset hosted by the NSF Arctic Data Center (https://arcticdata.io)
+
+Field data on shorebird ecology and environmental conditions were collected from 1993-2014 at 16 field sites in Alaska, Canada, and Russia.  
+
+Data were not collected in every year at all sites. Studies of the population ecology of these birds included nest-monitoring to determine timing of reproduction and reproductive success; live capture of birds to collect blood samples, feathers, and fecal samples for investigations of population structure and pathogens; banding of birds to determine annual survival rates; resighting of color-banded birds to determine space use and site fidelity; and use of light-sensitive geolocators to investigate migratory movements. Data on climatic conditions, prey abundance, and predators were also collected. Environmental data included weather stations that recorded daily climatic conditions, surveys of seasonal snowmelt, weekly sampling of terrestrial and aquatic invertebrates that are prey of shorebirds, live trapping of small mammals (alternate prey for shorebird predators), and daily counts of potential predators (jaegers, falcons, foxes). Detailed field methods for each year are available in the ASDN_protocol_201X.pdf files.  All research was conducted under permits from relevant federal, state and university authorities. 
+
+See `	01_ASDN_Readme.txt` provided in the data folder for metadata information about this data set.
+
+
+
+## Analyzing the bird dataset using csv files (raw data)
+
+
+Let us import the csv file with the species information:
 
 ```{r}
-con <- dbConnect(duckdb::duckdb(), dbdir = "birds.duckdb", read_only = FALSE)
+
 ```
+
+
+
+## Let's connect to our first database
+
+
+### Load the bird database
+
+This database has been built from the csv files we just manipulated, so the data should be very similar  - note we did not say identical more on this in the last section:
+
+```{r}
+conn <- dbConnect(duckdb::duckdb(), dbdir = "./data/bird_database.duckdb", read_only = FALSE)
+```
+
+
+### Let's try to reproduce the analaysis we just did
+
+```{r}
+species <- tbl(conn, "Species")
+species
+```
+
+```{r}
+species %>%
+  filter(Relevance=="Study species") %>%
+  select(Scientific_name) %>%
+  arrange(Scientific_name) %>%
+  head(3)
+```
+
+Note that those are not dataframes but tables. What `dbplyr` is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL to the database, retrieving results, etc.
+
+#### How can I get a "real dataframe?"
+
+you add `collect()` to your query. 
+
+```{r}
+species %>%
+  filter(Relevance=="Study species") %>%
+  select(Scientific_name) %>%
+  arrange(Scientific_name) %>%
+  head(3) %>% 
+  collect()
+```
+
+
+Note it means the full query is going to be ran and save in you memory. This might slow things down so you generally want to collect on the smallest data frame you can
+
+
+#### How can you see the SQL query equivalent to the tidyverse code?
+
+```{r}
+# Add show_query() to the end to see what SQL it is sending!
+species %>%
+  filter(Relevance=="Study species") %>%
+  select(Scientific_name) %>%
+  arrange(Scientific_name) %>%
+  head(3) %>% 
+  show_query()
+```
+This is a great way to start getting familiar with the SQL syntax, because although you can do a lot with `dbplyr` you can not do everything that SQL can do. So at some point you might want to start using SQL directly.
+
+Here is how you could run the query using the SQL code directly
+
+```{r}
+# Establish a set of Parquet files
+dbGetQuery(conn, "SELECT Scientific_name FROM Species WHERE (Relevance = 'Study species') ORDER BY Scientific_name LIMIT 3")
+```
+
+You can do pretty much anything with these quasi-tables, including grouping, summarization, joins, etc.
+
+Let's count how many species there are per Relevance categories:
+
+```{r}
+species %>%
+  group_by(Relevance) %>%
+  summarize(num_species = n())
+```
+
+Does that code looks familiar? But this time, here is really the query that was used to retrieve this information:
+
+
+```{r}
+species %>%
+  group_by(Relevance) %>%
+  summarize(num_species = n()) %>%
+  show_query()
+```
+```{r}
+species %>%
+  mutate(Code = paste("X", Code)) %>%
+  head()
+```
+
+```{r}
+species %>%
+  mutate(Code = paste("X", Code)) %>%
+  head() %>%
+  show_query()
+```
+
+Limitation: no way to add or update data, `dbplyr` is view only. If you want to add or update data, you'll need to use the `DBI` package functions.
+
+
+
+### Disconnecting from the database
+
+Before we close our session, it is good practice to disconnect from the database first
+
+```{r}
+DBI::dbDisconnect(conn, shutdown = TRUE)
+```
+
+
+## How did we create this database
+
+You might be wondering, how we created this database from our csv files. Most databases have some function to help you import csv files into databases. Note that since there is not data modeling (does not have to be normalized or tidy) constraints nor data type constraints a lot things can go wrong. This is a great opportunity to implement a QA/QC on your data and help you to keep clean and tidy moving forward as new data are collected.
+
+
+
 
