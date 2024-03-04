@@ -20,25 +20,55 @@ library(duckdb)       # Specific to duckDB
 
 ARCTIC SHOREBIRD DEMOGRAPHICS NETWORK  <https://doi.org/10.18739/A2222R68W>{target="_blank"}
 
-Dataset hosted by the NSF Arctic Data Center (https://arcticdata.io)
+Data set hosted by the NSF Arctic Data Center (<https://arcticdata.io>)
 
 Field data on shorebird ecology and environmental conditions were collected from 1993-2014 at 16 field sites in Alaska, Canada, and Russia.  
 
 Data were not collected in every year at all sites. Studies of the population ecology of these birds included nest-monitoring to determine timing of reproduction and reproductive success; live capture of birds to collect blood samples, feathers, and fecal samples for investigations of population structure and pathogens; banding of birds to determine annual survival rates; resighting of color-banded birds to determine space use and site fidelity; and use of light-sensitive geolocators to investigate migratory movements. Data on climatic conditions, prey abundance, and predators were also collected. Environmental data included weather stations that recorded daily climatic conditions, surveys of seasonal snowmelt, weekly sampling of terrestrial and aquatic invertebrates that are prey of shorebirds, live trapping of small mammals (alternate prey for shorebird predators), and daily counts of potential predators (jaegers, falcons, foxes). Detailed field methods for each year are available in the ASDN_protocol_201X.pdf files.  All research was conducted under permits from relevant federal, state and university authorities. 
 
-See `	01_ASDN_Readme.txt` provided in the data folder for metadata information about this data set.
+See `	01_ASDN_Readme.txt` provided in the `data` folder for full metadata information about this data set.
 
 
 
 ## Analyzing the bird dataset using csv files (raw data)
 
 
-Let us import the csv file with the species information:
+Let us import the csv files with the species information:
 
 ```{r}
+# Import the species
+species_csv <- read_csv("data/species.csv")
 
+glimpse(species_csv)
+```
+Let's explore what is in the `Relevance` attribute/column:
+
+```{r}
+species_csv %>% 
+  group_by(Relevance) %>%
+  count()
 ```
 
+We are interested in the `Study species` because according to the metadata they are the species that are 
+included in the data sets for banding, resighting, and/or nest monitoring. Let us extract the species and sort them in alphabetical order: 
+
+```{r}
+# list of the bird species included in the study
+species_csv %>%
+  filter(Relevance=="Study species") %>%
+  select(Scientific_name) %>%
+  arrange(Scientific_name)
+```
+
+Now we can load more information about the sites, nests, and eggs monitoring 
+
+```{r}
+sites_csv <- read_csv("data/site.csv")
+
+nests_csv <- read_csv("data/ASDN_Bird_nests.csv")
+
+eggs_csv <- read_csv("data/ASDN_Bird_eggs.csv")
+```
 
 
 ## Let's connect to our first database
