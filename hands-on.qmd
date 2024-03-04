@@ -11,7 +11,7 @@ Loading the necessary packages. DuckDB has its own R package that is mostly a wr
 library(tidyverse)
 library(dbplyr)       # to query databases in a tidyverse style manner
 library(DBI)          # to connect to databases
-# install.packages("duckdb")  # install this package to get duckDB installed on your computer
+# install.packages("duckdb")  # install this package to get duckDB API
 library(duckdb)       # Specific to duckDB
 ```
 
