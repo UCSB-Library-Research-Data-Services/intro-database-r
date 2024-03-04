@@ -1,0 +1,3 @@
+#!/bin/bash
+rm -f bird_database.duckdb
+duckdb bird_database.duckdb < schema-build-script.sql

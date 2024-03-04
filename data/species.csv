@@ -1,0 +1,100 @@
+Code,Common_name,Scientific_name,Relevance
+agsq,Arctic ground squirrel,Spermophilus parryii,Potential predator (eggs; mammal)
+amcr,American Crow,Corvus brachyrhynchos,Potential predator (avian)
+amgp,American Golden-Plover,Pluvialis dominica,Study species
+arfo,Arctic fox,Alopex lagopus,Potential predator (mammal)
+arte,Arctic Tern,Sterna paradisaea,Incidental monitoring
+basa,Baird's Sandpiper,Calidris bairdii,Study species
+bbis,Broad-billed Sandpiper,Calidris falcinellus,Study species
+bbpl,Black-bellied Plover,Pluvialis squatarola,Study species
+bbsa,Buff-breasted Sandpiper,Calidris subruficollis,Study species
+besw,Bewick's Swan,Cygnus columbianus,Incidental monitoring
+bltu,Black Turnstone,Arenaria melanocephala,Study species; potential predator (eggs)
+brant,Brant,Branta bernicla,Incidental monitoring
+brbe,Brown bear,Ursus arctos,Potential predator (mammal)
+brle,Brown lemming,Lemmus trimucronatus,Microtine (alternate prey for predators)
+btcu,Bristle-thighed Curlew,Numenius tahitiensis,Study species
+btgo,Bar-tailed Godwit,Limosa lapponica,Study species
+cole,Collared lemming,Dicrostonyx groenlandicus,Microtine (alternate prey for predators)
+cora,Common Raven,Corvus corax,Potential predator (avian)
+cosn,Common Snipe,Gallinago gallinago,Study species
+crpl,Common Ringed Plover,Charadrius hiaticula,Study species
+cusa,Curlew Sandpiper,Calidris ferruginea,Study species
+dunl,Dunlin,Calidris alpina,Study species
+eywa,Eastern Yellow Wagtail,Motacilla tschutschensis,Incidental monitoring
+glgu,Glaucous Gull,Larus hyperboreus,Potential predator (avian)
+goea,Golden Eagle,Aquila chrysaetos,Potential predator (avian)
+gwfg,Greater White-fronted Goose,Anser albifrons,Incidental monitoring
+gwgu,Glaucous-winged Gull,Larus glaucescens,Potential predator (avian)
+gwte,Green-winged Teal,Anas carolinensis,Incidental monitoring
+gyrf,Gyrfalcon,Falco rusticolus,Potential predator (avian)
+herg,Herring Gull,Larus argentatus,Potential predator (avian)
+hore,Hoary Redpoll,Acanthis hornemanni,Incidental monitoring
+hugo,Hudsonian Godwit,Limosa haemastica,Study species
+kill,Killdeer,Charadrius vociferus,Study species
+lalo,Lapland Longspur,Calcarius lapponicus,Incidental monitoring
+lbdo,Long-billed Dowitcher,Limnodromus scolopaceus,Study species
+lesa,Least Sandpiper,Calidris minutilla,Study species
+leye,Lesser Yellowlegs,Tringa flavipes,Study species
+list,Little Stint,Calidris minuta,Study species
+ltdu,Long-tailed Duck,Clangula hyemalis,Incidental monitoring
+ltja,Long-tailed Jaeger,Stercorarius longicaudus,Potential predator (avian)
+ltwe,Least weasel,Mustela nivalis,Potential predator (eggs; mammal)
+mago,Marbled Godwit,Limosa fedoa,Study species
+megu,Mew Gull,Larus canus,Potential predator (avian)
+merl,Merlin,Falco columbarius,Potential predator (avian)
+noha,Northern Harrier,Circus cyaneus,Potential predator (avian)
+nopi,Northern Pintail,Anas acuta,Incidental monitoring
+nrvo,Northern red-backed vole,Myodes rutilus,Microtine (alternate prey for predators)
+nsho,Northern Shoveler,Anas clypeata,Incidental monitoring
+pagp,Pacific Golden-Plover,Pluvialis fulva,Study species
+paja,Parasitic Jaeger,Stercorarius parasiticus,Potential predator (avian)
+palo,Pacific Loon,Gavia pacifica,Incidental monitoring
+pefa,Peregrine Falcon,Falco peregrinus,Potential predator (avian)
+pesa,Pectoral Sandpiper,Calidris melanotos,Study species
+pobe,Polar bear,Ursus maritimus,Potential predator (mammal)
+poja,Pomarine Jaeger,Stercorarius pomarinus,Potential predator (avian)
+pusa,Purple Sandpiper,Calidris maritima,Study species
+refo,Red fox,Vulpes vulpes,Potential predator (mammal)
+rekn,Red Knot,Calidris canutus,Study species
+reph,Red Phalarope,Phalaropus fulicarius,Study species
+rlha,Rough-legged Hawk,Buteo lagopus,Potential predator (avian)
+rnph,Red-necked Phalarope,Phalaropus lobatus,Study species
+rnst,Red-necked Stint,Calidris ruficollis,Study species
+rosa,Rock Sandpiper,Calidris ptilocnemis,Study species
+rtpi,Rock Ptarmigan,Lagopus muta,Incidental monitoring
+ruff,Ruff,Calidris pugnax,Study species
+rutu,Ruddy Turnstone,Arenaria interpres,Study species; potential predator (eggs)
+sacr,Sandhill Crane,Grus canadensis,Potential predator (avian)
+sagu,Sabine's Gull,Xema sabini,Incidental monitoring
+sand,Sanderling,Calidris alba,Study species
+savs,Savannah Sparrow,Passerculus sandwichensis,Incidental monitoring
+sbdo,Short-billed Dowitcher,Limnodromus griseus,Study species
+sbgu,Slaty-backed Gull,Larus schistisagus,Potential predator (avian)
+seow,Short-eared Owl,Asio flammeus,Potential predator (avian)
+sepl,Semipalmated Plover,Charadrius semipalmatus,Study species
+sesa,Semipalmated Sandpiper,Calidris pusilla,Study species
+snow,Snowy Owl,Bubo scandiacus,Potential predator (avian)
+spei,Spectacled Eider,Somateria fischeri,Incidental monitoring
+spre,Spotted Redshank,Tringa erythropus,Study species
+spsa,Spotted Sandpiper,Actitis macularius,Study species
+spts,Sharp-tailed Sandpiper,Calidris acuminata,Study species
+stsa,Stilt Sandpiper,Calidris himantopus,Study species
+stwe,Short-tailed weasel,Mustela erminea,Potential predator (mammal)
+test,Temminck's Stint,Calidris temminckii,Study species
+thgu,Thayer's Gull,Larus thayeri,Potential predator (avian)
+tusw,Tundra Swan,Cygnus columbianus,Incidental monitoring
+tuvo,Tundra vole,Microtus oeconomus,Microtine (alternate prey for predators)
+unfa,Unidentified falcon,,Potential predator (avian)
+ungu,Unidentified gull,Larus sp.,Potential predator (avian)
+unja,Unidentified jaeger,Stercorarius sp.,Potential predator (avian)
+unle,Unidentified lemming or vole,Microtine sp.,Microtine (alternate prey for predators)
+unra,Unidentified raptor,,Potential predator (avian)
+vegu,Vega Gull,Larus vegae,Potential predator (avian)
+wesa,Western Sandpiper,Calidris mauri,Study species
+whim,Whimbrel,Numenius phaeopus,Study species
+wipt,Willow Ptarmigan,Lagopus lagopus,Incidental monitoring
+wisn,Wilson's Snipe,Gallinago delicata,Study species
+wolv,Wolverine,Gulo gulo,Potential predator (mammal)
+wosa,Wood Sandpiper,Tringa glareola,Study species
+wrsa,White-rumped Sandpiper,Calidris fuscicollis,Study species
