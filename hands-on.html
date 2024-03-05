@@ -285,7 +285,8 @@ $ Relevance       &lt;chr&gt; "Potential predator (eggs; mammal)", "Potential pr
 7 Study species; potential predator (eggs)           2</code></pre>
 </div>
 </div>
-<p>We are interested in the <code>Study species</code> because according to the metadata they are the species that are included in the data sets for banding, resighting, and/or nest monitoring. Let us extract the species and sort them in alphabetical order:</p>
+<p>We are interested in the <code>Study species</code> because according to the metadata, they are the species that are included in the data sets for banding, resighting, and/or nest monitoring.</p>
+<p>Let us extract the species and sort them in alphabetical order:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># list of the bird species included in the study</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>species_study <span class="ot">&lt;-</span> species_csv <span class="sc">%&gt;%</span></span>
@@ -338,7 +339,7 @@ $ Length    &lt;dbl&gt; 39.14, 41.51, 48.29, 47.56, 48.13, 49.62, 47.16, 51.07, 
 $ Width     &lt;dbl&gt; 33.00, 33.39, 33.40, 32.36, 32.40, 32.40, 34.44, 32.22, 34.6…</code></pre>
 </div>
 </div>
-<p><code>Nest_Id</code> seems promising as a foreign key!!</p>
+<p><code>Nest_Id</code> seems like promising as a foreign key!!</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(nests_csv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -359,8 +360,10 @@ $ ageMethod  &lt;chr&gt; NA, NA, "float", "float", "float", "float", "float", "f
 </div>
 <p><code>Species</code> is probably the field we will use to join nest to the species</p>
 <p>OK let’s do it:</p>
-<p>First compute the average of the volume of an egg. we can use the following formula:</p>
-<p><span class="math inline">\(\frac{\Pi}6W^2L\)</span></p>
+<p>First, we need to compute the average of the volume of an egg. We can use the following formula:</p>
+<p><span class="math inline">\(Volume=\frac{\Pi}6W^2L\)</span></p>
+<p>Where W is the width and L the length of the egg</p>
+<p>We can use mutate to do so:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>eggs_area_df <span class="ot">&lt;-</span> eggs_csv <span class="sc">%&gt;%</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">egg_volume =</span> pi<span class="sc">/</span><span class="dv">6</span><span class="sc">*</span>Width<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>Length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -411,7 +414,7 @@ $ ageMethod  &lt;chr&gt; NA, NA, "float", "float", "float", "float", "float", "f
 <h2 class="anchored" data-anchor-id="lets-connect-to-our-first-database">Let’s connect to our first database</h2>
 <section id="load-the-bird-database" class="level3">
 <h3 class="anchored" data-anchor-id="load-the-bird-database">Load the bird database</h3>
-<p>This database has been built from the csv files we just manipulated, so the data should be very similar - note we did not say identical more on this in the last section:</p>
+<p>This database has been built from the csv files we just analyzed, so the data should be very similar - note we did not say identical more on this in the last section:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(duckdb<span class="sc">::</span><span class="fu">duckdb</span>(), <span class="at">dbdir =</span> <span class="st">"./data/bird_database.duckdb"</span>, <span class="at">read_only =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -464,10 +467,10 @@ $ ageMethod  &lt;chr&gt; NA, NA, "float", "float", "float", "float", "float", "f
 3 Calidris alba     </code></pre>
 </div>
 </div>
-<p>Note that those are not data frames but tables. What <code>dbplyr</code> is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL to the database, retrieving results, etc.</p>
+<p>Note that those are not data frames but tables. What <code>dbplyr</code> is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL code to query the database, retrieving results, etc.</p>
 <section id="how-can-i-get-a-real-data-frame" class="level4">
 <h4 class="anchored" data-anchor-id="how-can-i-get-a-real-data-frame">How can I get a “real data frame?”</h4>
-<p>you add <code>collect()</code> to your query.</p>
+<p>You add <code>collect()</code> to your query.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>species_db <span class="sc">%&gt;%</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Relevance<span class="sc">==</span><span class="st">"Study species"</span>) <span class="sc">%&gt;%</span></span>
@@ -486,8 +489,8 @@ $ ageMethod  &lt;chr&gt; NA, NA, "float", "float", "float", "float", "float", "f
 </div>
 <p>Note it means the full query is going to be ran and save in your environment. This might slow things down so you generally want to collect on the smallest data frame you can</p>
 </section>
-<section id="how-can-you-see-the-sql-query-equivalent-to-the-tidyverse-code" class="level4">
-<h4 class="anchored" data-anchor-id="how-can-you-see-the-sql-query-equivalent-to-the-tidyverse-code">How can you see the SQL query equivalent to the tidyverse code?</h4>
+<section id="how-can-you-see-the-sql-query-equivalent-to-the-tidyverse-code-show_query" class="level4">
+<h4 class="anchored" data-anchor-id="how-can-you-see-the-sql-query-equivalent-to-the-tidyverse-code-show_query">How can you see the SQL query equivalent to the tidyverse code? =&gt; <code>show_query()</code></h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add show_query() to the end to see what SQL it is sending!</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>species_db <span class="sc">%&gt;%</span></span>
@@ -528,13 +531,13 @@ LIMIT 3</code></pre>
 # Database: DuckDB v0.9.2 [unknown@Linux 6.5.0-1015-azure:R 4.3.3/./data/bird_database.duckdb]
   Relevance                                num_species
   &lt;chr&gt;                                          &lt;dbl&gt;
-1 Incidental monitoring                             18
-2 Study species                                     41
+1 Potential predator (eggs; mammal)                  2
+2 Microtine (alternate prey for predators)           5
 3 Potential predator (avian)                        25
 4 Potential predator (mammal)                        6
 5 Study species; potential predator (eggs)           2
-6 Potential predator (eggs; mammal)                  2
-7 Microtine (alternate prey for predators)           5</code></pre>
+6 Incidental monitoring                             18
+7 Study species                                     41</code></pre>
 </div>
 </div>
 <p>Does that code looks familiar? But this time, here is really the query that was used to retrieve this information:</p>
