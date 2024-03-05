@@ -101,6 +101,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -217,7 +246,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="analyzing-the-bird-dataset-using-csv-files-raw-data" class="level2">
 <h2 class="anchored" data-anchor-id="analyzing-the-bird-dataset-using-csv-files-raw-data">Analyzing the bird dataset using csv files (raw data)</h2>
-<p>Let us import the csv files with the species information:</p>
+<p>Let us import the csv files with the bird species information:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import the species</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>species_csv <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/species.csv"</span>)</span>
@@ -254,34 +283,122 @@ $ Relevance       &lt;chr&gt; "Potential predator (eggs; mammal)", "Potential pr
 <p>We are interested in the <code>Study species</code> because according to the metadata they are the species that are included in the data sets for banding, resighting, and/or nest monitoring. Let us extract the species and sort them in alphabetical order:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># list of the bird species included in the study</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>species_csv <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>species_study <span class="ot">&lt;-</span> species_csv <span class="sc">%&gt;%</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Relevance<span class="sc">==</span><span class="st">"Study species"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Scientific_name) <span class="sc">%&gt;%</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Scientific_name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Scientific_name, Code) <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Scientific_name)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>species_study</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 41 × 1
-   Scientific_name     
-   &lt;chr&gt;               
- 1 Actitis macularius  
- 2 Calidris acuminata  
- 3 Calidris alba       
- 4 Calidris alpina     
- 5 Calidris bairdii    
- 6 Calidris canutus    
- 7 Calidris falcinellus
- 8 Calidris ferruginea 
- 9 Calidris fuscicollis
-10 Calidris himantopus 
+<pre><code># A tibble: 41 × 2
+   Scientific_name      Code 
+   &lt;chr&gt;                &lt;chr&gt;
+ 1 Actitis macularius   spsa 
+ 2 Calidris acuminata   spts 
+ 3 Calidris alba        sand 
+ 4 Calidris alpina      dunl 
+ 5 Calidris bairdii     basa 
+ 6 Calidris canutus     rekn 
+ 7 Calidris falcinellus bbis 
+ 8 Calidris ferruginea  cusa 
+ 9 Calidris fuscicollis wrsa 
+10 Calidris himantopus  stsa 
 # ℹ 31 more rows</code></pre>
 </div>
 </div>
-<p>Now we can load more information about the sites, nests, and eggs monitoring</p>
+<p>We would like to know what is the average egg size for each of those bird species. How would we do that?</p>
+<p>We will need more information that what we have in our species table. Actually we will need to also retrieve information from the nests and eggs monitoring table.</p>
+<p>An egg is in a nest, and a nest is associated with a species</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sites_csv <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/site.csv"</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>nests_csv <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/ASDN_Bird_nests.csv"</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># information about the nests</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>nests_csv <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/ASDN_Bird_nests.csv"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># information about the </span></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>eggs_csv <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/ASDN_Bird_eggs.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>How do we join those tables?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(eggs_csv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 406
+Columns: 7
+$ Book_page &lt;chr&gt; "b14.6", "b14.6", "b14.6", "b14.6", "b14.6", "b14.6", "b14.6…
+$ Year      &lt;dbl&gt; 2014, 2014, 2014, 2014, 2014, 2014, 2014, 2014, 2014, 2014, …
+$ Site      &lt;chr&gt; "eaba", "eaba", "eaba", "eaba", "eaba", "eaba", "eaba", "eab…
+$ Nest_ID   &lt;chr&gt; "14eabaage01", "14eabaage01", "14eabaage01", "14eabaagl01", …
+$ Egg_num   &lt;dbl&gt; 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, …
+$ Length    &lt;dbl&gt; 39.14, 41.51, 48.29, 47.56, 48.13, 49.62, 47.16, 51.07, 48.7…
+$ Width     &lt;dbl&gt; 33.00, 33.39, 33.40, 32.36, 32.40, 32.40, 34.44, 32.22, 34.6…</code></pre>
+</div>
+</div>
+<p><code>Nest_Id</code> seems promising as a foreign key!!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(nests_csv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,547
+Columns: 11
+$ Book_page  &lt;chr&gt; "b14.6", "b11.7", "b11.6", "b11.6", "b11.6", "b11.7", "b11.…
+$ Year       &lt;dbl&gt; 2014, 2011, 2011, 2011, 2011, 2011, 2011, 2011, 2011, 2011,…
+$ Site       &lt;chr&gt; "chur", "eaba", "eaba", "eaba", "eaba", "eaba", "eaba", "ea…
+$ Nest_ID    &lt;chr&gt; "14HPE1", "11eaba", "11eabaagc01", "11eabaagv01", "11eababb…
+$ Species    &lt;chr&gt; "sepl", "wrsa", "amgp", "amgp", "bbpl", "wrsa", "dunl", "du…
+$ Observer   &lt;chr&gt; "vloverti", "bhill", "dkessler", "dkessler", "dkessler", "b…
+$ Date_found &lt;date&gt; 2014-06-14, 2011-07-10, 2011-06-24, 2011-06-25, 2011-06-24…
+$ how_found  &lt;chr&gt; NA, "searcher", "searcher", "searcher", "searcher", "search…
+$ Clutch_max &lt;dbl&gt; 3, 4, 4, 3, 4, 4, 3, 4, 4, 3, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4,…
+$ floatAge   &lt;dbl&gt; NA, NA, 6, 3, 4, 2, 2, 5, 4, 4, 6, 5, 4, 4, 4, 5, 4, 12, 3,…
+$ ageMethod  &lt;chr&gt; NA, NA, "float", "float", "float", "float", "float", "float…</code></pre>
+</div>
+</div>
+<p><code>Species</code> is probably the field we will use to join nest to the species</p>
+<p>OK let’s do it:</p>
+<p>First compute the average of the volume of an egg. we can use the following formula:</p>
+<p><span class="math inline">\(\frac{\Pi}6W^2L\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>eggs_area_df <span class="ot">&lt;-</span> eggs_csv <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">egg_volume =</span> pi<span class="sc">/</span><span class="dv">6</span><span class="sc">*</span>Width<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>Length) <span class="co"># %&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># group_by(Nest_ID) %&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># summarise(eggs_area_avg = mean(egg_area, na.rm = TRUE))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now let’s join this information to the nest table, and average by species</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>species_egg_volume_avg <span class="ot">&lt;-</span> <span class="fu">left_join</span>(nests_csv, eggs_area_df, <span class="at">by=</span><span class="st">"Nest_ID"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Species) <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">egg_volume_avg =</span> <span class="fu">mean</span>(egg_volume, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(egg_volume_avg)) <span class="sc">%&gt;%</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>species_egg_volume_avg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 2
+  Species egg_volume_avg
+  &lt;chr&gt;            &lt;dbl&gt;
+1 bbpl            33975.
+2 amgp            28545.
+3 rutu            18094.
+4 dunl            11777.
+5 wrsa            10111.
+6 sepl             9903.
+7 reph             8444.</code></pre>
+</div>
+</div>
+<p>Ideally we would like the scientific names…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>species_egg_area_avg <span class="ot">&lt;-</span> species_study <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(species_egg_volume_avg, <span class="at">by =</span> <span class="fu">join_by</span>(Code <span class="sc">==</span> Species)) </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>species_egg_area_avg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  Scientific_name         Code  egg_volume_avg
+  &lt;chr&gt;                   &lt;chr&gt;          &lt;dbl&gt;
+1 Calidris alpina         dunl          11777.
+2 Calidris fuscicollis    wrsa          10111.
+3 Charadrius semipalmatus sepl           9903.
+4 Phalaropus fulicarius   reph           8444.
+5 Pluvialis dominica      amgp          28545.
+6 Pluvialis squatarola    bbpl          33975.</code></pre>
+</div>
 </div>
 </section>
 <section id="lets-connect-to-our-first-database" class="level2">
@@ -290,14 +407,14 @@ $ Relevance       &lt;chr&gt; "Potential predator (eggs; mammal)", "Potential pr
 <h3 class="anchored" data-anchor-id="load-the-bird-database">Load the bird database</h3>
 <p>This database has been built from the csv files we just manipulated, so the data should be very similar - note we did not say identical more on this in the last section:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(duckdb<span class="sc">::</span><span class="fu">duckdb</span>(), <span class="at">dbdir =</span> <span class="st">"./data/bird_database.duckdb"</span>, <span class="at">read_only =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(duckdb<span class="sc">::</span><span class="fu">duckdb</span>(), <span class="at">dbdir =</span> <span class="st">"./data/bird_database.duckdb"</span>, <span class="at">read_only =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="lets-try-to-reproduce-the-analaysis-we-just-did" class="level3">
 <h3 class="anchored" data-anchor-id="lets-try-to-reproduce-the-analaysis-we-just-did">Let’s try to reproduce the analaysis we just did</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">tbl</span>(conn, <span class="st">"Species"</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>species</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">tbl</span>(conn, <span class="st">"Species"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>species</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   table&lt;Species&gt; [?? x 4]
 # Database: DuckDB v0.9.2 [unknown@Linux 6.5.0-1015-azure:R 4.3.3/./data/bird_database.duckdb]
@@ -317,11 +434,11 @@ $ Relevance       &lt;chr&gt; "Potential predator (eggs; mammal)", "Potential pr
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Relevance<span class="sc">==</span><span class="st">"Study species"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Scientific_name) <span class="sc">%&gt;%</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Scientific_name) <span class="sc">%&gt;%</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Relevance<span class="sc">==</span><span class="st">"Study species"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Scientific_name) <span class="sc">%&gt;%</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Scientific_name) <span class="sc">%&gt;%</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:     SQL [3 x 1]
 # Database:   DuckDB v0.9.2 [unknown@Linux 6.5.0-1015-azure:R 4.3.3/./data/bird_database.duckdb]
@@ -338,12 +455,12 @@ $ Relevance       &lt;chr&gt; "Potential predator (eggs; mammal)", "Potential pr
 <h4 class="anchored" data-anchor-id="how-can-i-get-a-real-dataframe">How can I get a “real dataframe?”</h4>
 <p>you add <code>collect()</code> to your query.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Relevance<span class="sc">==</span><span class="st">"Study species"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Scientific_name) <span class="sc">%&gt;%</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Scientific_name) <span class="sc">%&gt;%</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Relevance<span class="sc">==</span><span class="st">"Study species"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Scientific_name) <span class="sc">%&gt;%</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Scientific_name) <span class="sc">%&gt;%</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 1
   Scientific_name   
@@ -358,13 +475,13 @@ $ Relevance       &lt;chr&gt; "Potential predator (eggs; mammal)", "Potential pr
 <section id="how-can-you-see-the-sql-query-equivalent-to-the-tidyverse-code" class="level4">
 <h4 class="anchored" data-anchor-id="how-can-you-see-the-sql-query-equivalent-to-the-tidyverse-code">How can you see the SQL query equivalent to the tidyverse code?</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add show_query() to the end to see what SQL it is sending!</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Relevance<span class="sc">==</span><span class="st">"Study species"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Scientific_name) <span class="sc">%&gt;%</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Scientific_name) <span class="sc">%&gt;%</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add show_query() to the end to see what SQL it is sending!</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Relevance<span class="sc">==</span><span class="st">"Study species"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Scientific_name) <span class="sc">%&gt;%</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Scientific_name) <span class="sc">%&gt;%</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;SQL&gt;
 SELECT Scientific_name
@@ -377,8 +494,8 @@ LIMIT 3</code></pre>
 <p>This is a great way to start getting familiar with the SQL syntax, because although you can do a lot with <code>dbplyr</code> you can not do everything that SQL can do. So at some point you might want to start using SQL directly.</p>
 <p>Here is how you could run the query using the SQL code directly</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Establish a set of Parquet files</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(conn, <span class="st">"SELECT Scientific_name FROM Species WHERE (Relevance = 'Study species') ORDER BY Scientific_name LIMIT 3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Establish a set of Parquet files</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(conn, <span class="st">"SELECT Scientific_name FROM Species WHERE (Relevance = 'Study species') ORDER BY Scientific_name LIMIT 3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     Scientific_name
 1 Actitis macularius
@@ -389,9 +506,9 @@ LIMIT 3</code></pre>
 <p>You can do pretty much anything with these quasi-tables, including grouping, summarization, joins, etc.</p>
 <p>Let’s count how many species there are per Relevance categories:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Relevance) <span class="sc">%&gt;%</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">num_species =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Relevance) <span class="sc">%&gt;%</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">num_species =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   SQL [7 x 2]
 # Database: DuckDB v0.9.2 [unknown@Linux 6.5.0-1015-azure:R 4.3.3/./data/bird_database.duckdb]
@@ -399,19 +516,19 @@ LIMIT 3</code></pre>
   &lt;chr&gt;                                          &lt;dbl&gt;
 1 Potential predator (eggs; mammal)                  2
 2 Microtine (alternate prey for predators)           5
-3 Study species                                     41
-4 Incidental monitoring                             18
-5 Potential predator (avian)                        25
-6 Potential predator (mammal)                        6
-7 Study species; potential predator (eggs)           2</code></pre>
+3 Potential predator (avian)                        25
+4 Potential predator (mammal)                        6
+5 Study species; potential predator (eggs)           2
+6 Incidental monitoring                             18
+7 Study species                                     41</code></pre>
 </div>
 </div>
 <p>Does that code looks familiar? But this time, here is really the query that was used to retrieve this information:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Relevance) <span class="sc">%&gt;%</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">num_species =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Relevance) <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">num_species =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;SQL&gt;
 SELECT Relevance, COUNT(*) AS num_species
@@ -420,9 +537,9 @@ GROUP BY Relevance</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Code =</span> <span class="fu">paste</span>(<span class="st">"X"</span>, Code)) <span class="sc">%&gt;%</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Code =</span> <span class="fu">paste</span>(<span class="st">"X"</span>, Code)) <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   SQL [6 x 4]
 # Database: DuckDB v0.9.2 [unknown@Linux 6.5.0-1015-azure:R 4.3.3/./data/bird_database.duckdb]
@@ -437,10 +554,10 @@ GROUP BY Relevance</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Code =</span> <span class="fu">paste</span>(<span class="st">"X"</span>, Code)) <span class="sc">%&gt;%</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>species <span class="sc">%&gt;%</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Code =</span> <span class="fu">paste</span>(<span class="st">"X"</span>, Code)) <span class="sc">%&gt;%</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;SQL&gt;
 SELECT
@@ -459,7 +576,7 @@ LIMIT 6</code></pre>
 <h3 class="anchored" data-anchor-id="disconnecting-from-the-database">Disconnecting from the database</h3>
 <p>Before we close our session, it is good practice to disconnect from the database first</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbDisconnect</span>(conn, <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbDisconnect</span>(conn, <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
