@@ -50,7 +50,9 @@ species_csv %>%
   summarize(num_species = n())
 ```
 
-We are interested in the `Study species` because according to the metadata they are the species that are included in the data sets for banding, resighting, and/or nest monitoring. Let us extract the species and sort them in alphabetical order:
+We are interested in the `Study species` because according to the metadata, they are the species that are included in the data sets for banding, resighting, and/or nest monitoring. 
+
+Let us extract the species and sort them in alphabetical order:
 
 ```{r}
 # list of the bird species included in the study
@@ -84,7 +86,7 @@ How do we join those tables?
 glimpse(eggs_csv)
 ```
 
-`Nest_Id` seems promising as a foreign key!!
+`Nest_Id` seems like promising as a foreign key!!
 
 ```{r}
 glimpse(nests_csv)
@@ -94,9 +96,13 @@ glimpse(nests_csv)
 
 OK let's do it:
 
-First compute the average of the volume of an egg. we can use the following formula:
+First, we need to compute the average of the volume of an egg. We can use the following formula:
 
-$\frac{\Pi}6W^2L$
+$Volume=\frac{\Pi}6W^2L$
+
+Where W is the width and L the length of the egg
+
+We can use mutate to do so:
 
 ```{r}
 eggs_area_df <- eggs_csv %>%
@@ -114,6 +120,7 @@ species_egg_volume_avg <- left_join(nests_csv, eggs_area_df, by="Nest_ID") %>%
 
 species_egg_volume_avg
 ```
+
 Ideally we would like the scientific names...
 
 ```{r}
@@ -128,7 +135,7 @@ species_egg_area_avg
 
 ### Load the bird database
 
-This database has been built from the csv files we just manipulated, so the data should be very similar - note we did not say identical more on this in the last section:
+This database has been built from the csv files we just analyzed, so the data should be very similar - note we did not say identical more on this in the last section:
 
 ```{r}
 conn <- dbConnect(duckdb::duckdb(), dbdir = "./data/bird_database.duckdb", read_only = FALSE)
@@ -155,11 +162,11 @@ species_db %>%
   head(3)
 ```
 
-Note that those are not data frames but tables. What `dbplyr` is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL to the database, retrieving results, etc.
+Note that those are not data frames but tables. What `dbplyr` is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL code to query the database, retrieving results, etc.
 
 #### How can I get a "real data frame?"
 
-you add `collect()` to your query.
+You add `collect()` to your query.
 
 ```{r}
 species_db %>%
@@ -172,7 +179,7 @@ species_db %>%
 
 Note it means the full query is going to be ran and save in your environment. This might slow things down so you generally want to collect on the smallest data frame you can
 
-#### How can you see the SQL query equivalent to the tidyverse code?
+#### How can you see the SQL query equivalent to the tidyverse code? => `show_query()`
 
 ```{r}
 # Add show_query() to the end to see what SQL it is sending!
@@ -284,5 +291,4 @@ DBI::dbDisconnect(conn, shutdown = TRUE)
 ## How did we create this database
 
 You might be wondering, how we created this database from our csv files. Most databases have some function to help you import csv files into databases. Note that since there is not data modeling (does not have to be normalized or tidy) constraints nor data type constraints a lot things can go wrong. This is a great opportunity to implement a QA/QC on your data and help you to keep clean and tidy moving forward as new data are collected.
-
 
