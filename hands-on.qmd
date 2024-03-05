@@ -28,6 +28,7 @@ Data were not collected in every year at all sites. Studies of the population ec
 
 See `01_ASDN_Readme.txt` provided in the `data` folder for full metadata information about this data set.
 
+
 ## Analyzing the bird dataset using csv files (raw data)
 
 Let us import the csv files with the bird species information:
@@ -44,7 +45,7 @@ Let's explore what is in the `Relevance` attribute/column:
 ```{r}
 species_csv %>% 
   group_by(Relevance) %>%
-  count()
+  summarize(num_species = n())
 ```
 
 We are interested in the `Study species` because according to the metadata they are the species that are included in the data sets for banding, resighting, and/or nest monitoring. Let us extract the species and sort them in alphabetical order:
@@ -58,6 +59,8 @@ species_study <- species_csv %>%
 
 species_study
 ```
+
+#### Average egg volume
 
 We would like to know what is the average egg size for each of those bird species. How would we do that?
 
@@ -95,9 +98,7 @@ $\frac{\Pi}6W^2L$
 
 ```{r}
 eggs_area_df <- eggs_csv %>%
-  mutate(egg_volume = pi/6*Width^2*Length) # %>%
-  # group_by(Nest_ID) %>%
-  # summarise(eggs_area_avg = mean(egg_area, na.rm = TRUE))
+  mutate(egg_volume = pi/6*Width^2*Length)
 ```
 
 Now let's join this information to the nest table, and average by species
@@ -131,29 +132,35 @@ This database has been built from the csv files we just manipulated, so the data
 conn <- dbConnect(duckdb::duckdb(), dbdir = "./data/bird_database.duckdb", read_only = FALSE)
 ```
 
+List all the tables present in the database:
+
+```{r}
+dbListTables(conn)
+```
+
 ### Let's try to reproduce the analaysis we just did
 
 ```{r}
-species <- tbl(conn, "Species")
-species
+species_db <- tbl(conn, "Species")
+species_db
 ```
 
 ```{r}
-species %>%
+species_db %>%
   filter(Relevance=="Study species") %>%
   select(Scientific_name) %>%
   arrange(Scientific_name) %>%
   head(3)
 ```
 
-Note that those are not dataframes but tables. What `dbplyr` is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL to the database, retrieving results, etc.
+Note that those are not data frames but tables. What `dbplyr` is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL to the database, retrieving results, etc.
 
-#### How can I get a "real dataframe?"
+#### How can I get a "real data frame?"
 
 you add `collect()` to your query.
 
 ```{r}
-species %>%
+species_db %>%
   filter(Relevance=="Study species") %>%
   select(Scientific_name) %>%
   arrange(Scientific_name) %>%
@@ -161,13 +168,13 @@ species %>%
   collect()
 ```
 
-Note it means the full query is going to be ran and save in you memory. This might slow things down so you generally want to collect on the smallest data frame you can
+Note it means the full query is going to be ran and save in your environment. This might slow things down so you generally want to collect on the smallest data frame you can
 
 #### How can you see the SQL query equivalent to the tidyverse code?
 
 ```{r}
 # Add show_query() to the end to see what SQL it is sending!
-species %>%
+species_db %>%
   filter(Relevance=="Study species") %>%
   select(Scientific_name) %>%
   arrange(Scientific_name) %>%
@@ -177,10 +184,10 @@ species %>%
 
 This is a great way to start getting familiar with the SQL syntax, because although you can do a lot with `dbplyr` you can not do everything that SQL can do. So at some point you might want to start using SQL directly.
 
-Here is how you could run the query using the SQL code directly
+Here is how you could run the query using the SQL code directly:
 
 ```{r}
-# Establish a set of Parquet files
+# query the database using SQL
 dbGetQuery(conn, "SELECT Scientific_name FROM Species WHERE (Relevance = 'Study species') ORDER BY Scientific_name LIMIT 3")
 ```
 
@@ -189,7 +196,7 @@ You can do pretty much anything with these quasi-tables, including grouping, sum
 Let's count how many species there are per Relevance categories:
 
 ```{r}
-species %>%
+species_db %>%
   group_by(Relevance) %>%
   summarize(num_species = n())
 ```
@@ -197,26 +204,71 @@ species %>%
 Does that code looks familiar? But this time, here is really the query that was used to retrieve this information:
 
 ```{r}
-species %>%
+species_db %>%
   group_by(Relevance) %>%
   summarize(num_species = n()) %>%
   show_query()
 ```
+You can also create new columns using mutate:
 
 ```{r}
-species %>%
+species_db %>%
   mutate(Code = paste("X", Code)) %>%
   head()
 ```
+How does the query looks like?
 
 ```{r}
-species %>%
+species_db %>%
   mutate(Code = paste("X", Code)) %>%
   head() %>%
   show_query()
 ```
+:::warning
+Limitation: no way to add or update data in the database, `dbplyr` is view only. If you want to add or update data, you'll need to use the `DBI` package functions.
+:::
 
-Limitation: no way to add or update data, `dbplyr` is view only. If you want to add or update data, you'll need to use the `DBI` package functions.
+#### Average egg volume
+
+Calculating the average bird eggs volume per species directly on the database
+
+```{r}
+# loading all the necessary tables
+eggs_db <- tbl(conn, "Bird_eggs")
+nests_db <- tbl(conn, "Bird_nests")
+```
+
+Compute the volume:
+
+```{r}
+eggs_area_db <- eggs_db %>%
+  mutate(egg_volume = pi/6*Width^2*Length)
+```
+
+Now let's join this information to the nest table, and average by species
+
+```{r}
+species_egg_volume_avg_db <- left_join(nests_db, eggs_area_db, by="Nest_ID") %>%
+  group_by(Species) %>%
+  summarise(egg_volume_avg = mean(egg_volume, na.rm = TRUE)) %>%
+  arrange(desc(egg_volume_avg)) %>% 
+  collect() %>%
+  drop_na()
+
+species_egg_volume_avg_db
+```
+
+```{r}
+species_egg_volume_avg_db <- left_join(nests_db, eggs_area_db, by="Nest_ID") %>%
+  group_by(Species) %>%
+  summarise(egg_volume_avg = mean(egg_volume, na.rm = TRUE)) %>%
+  arrange(desc(egg_volume_avg)) %>% 
+  show_query()
+```
+
+:::note
+Why does the SQL query include the volume computation?
+:::
 
 ### Disconnecting from the database
 
@@ -226,6 +278,13 @@ Before we close our session, it is good practice to disconnect from the database
 DBI::dbDisconnect(conn, shutdown = TRUE)
 ```
 
+
 ## How did we create this database
 
 You might be wondering, how we created this database from our csv files. Most databases have some function to help you import csv files into databases. Note that since there is not data modeling (does not have to be normalized or tidy) constraints nor data type constraints a lot things can go wrong. This is a great opportunity to implement a QA/QC on your data and help you to keep clean and tidy moving forward as new data are collected.
+
+
+```{sql}
+```
+
+
