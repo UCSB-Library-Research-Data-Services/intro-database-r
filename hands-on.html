@@ -195,11 +195,14 @@ window.Quarto = {
    
   <ul>
   <li><a href="#the-dataset" id="toc-the-dataset" class="nav-link active" data-scroll-target="#the-dataset">The dataset</a></li>
-  <li><a href="#analyzing-the-bird-dataset-using-csv-files-raw-data" id="toc-analyzing-the-bird-dataset-using-csv-files-raw-data" class="nav-link" data-scroll-target="#analyzing-the-bird-dataset-using-csv-files-raw-data">Analyzing the bird dataset using csv files (raw data)</a></li>
+  <li><a href="#analyzing-the-bird-dataset-using-csv-files-raw-data" id="toc-analyzing-the-bird-dataset-using-csv-files-raw-data" class="nav-link" data-scroll-target="#analyzing-the-bird-dataset-using-csv-files-raw-data">Analyzing the bird dataset using csv files (raw data)</a>
+  <ul class="collapse">
+  <li><a href="#average-egg-volume" id="toc-average-egg-volume" class="nav-link" data-scroll-target="#average-egg-volume">Average egg volume</a></li>
+  </ul></li>
   <li><a href="#lets-connect-to-our-first-database" id="toc-lets-connect-to-our-first-database" class="nav-link" data-scroll-target="#lets-connect-to-our-first-database">Let’s connect to our first database</a>
   <ul class="collapse">
   <li><a href="#load-the-bird-database" id="toc-load-the-bird-database" class="nav-link" data-scroll-target="#load-the-bird-database">Load the bird database</a></li>
-  <li><a href="#lets-try-to-reproduce-the-analaysis-we-just-did" id="toc-lets-try-to-reproduce-the-analaysis-we-just-did" class="nav-link" data-scroll-target="#lets-try-to-reproduce-the-analaysis-we-just-did">Let’s try to reproduce the analaysis we just did</a></li>
+  <li><a href="#average-egg-volume-analysis" id="toc-average-egg-volume-analysis" class="nav-link" data-scroll-target="#average-egg-volume-analysis">Average egg volume analysis</a></li>
   <li><a href="#disconnecting-from-the-database" id="toc-disconnecting-from-the-database" class="nav-link" data-scroll-target="#disconnecting-from-the-database">Disconnecting from the database</a></li>
   </ul></li>
   <li><a href="#how-did-we-create-this-database" id="toc-how-did-we-create-this-database" class="nav-link" data-scroll-target="#how-did-we-create-this-database">How did we create this database</a></li>
@@ -312,9 +315,21 @@ $ Relevance       &lt;chr&gt; "Potential predator (eggs; mammal)", "Potential pr
 # ℹ 31 more rows</code></pre>
 </div>
 </div>
-<section id="average-egg-volume" class="level4">
-<h4 class="anchored" data-anchor-id="average-egg-volume">Average egg volume</h4>
+<section id="average-egg-volume" class="level3">
+<h3 class="anchored" data-anchor-id="average-egg-volume">Average egg volume</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Analysis
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>We would like to know what is the average egg size for each of those bird species. How would we do that?</p>
+</div>
+</div>
 <p>We will need more information that what we have in our species table. Actually we will need to also retrieve information from the nests and eggs monitoring table.</p>
 <p>An egg is in a nest, and a nest is associated with a species</p>
 <div class="cell">
@@ -426,9 +441,7 @@ $ ageMethod  &lt;chr&gt; NA, NA, "float", "float", "float", "float", "float", "f
 [5] "Site"            "Species"        </code></pre>
 </div>
 </div>
-</section>
-<section id="lets-try-to-reproduce-the-analaysis-we-just-did" class="level3">
-<h3 class="anchored" data-anchor-id="lets-try-to-reproduce-the-analaysis-we-just-did">Let’s try to reproduce the analaysis we just did</h3>
+<p>Let’s have a look at the Species table</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>species_db <span class="ot">&lt;-</span> <span class="fu">tbl</span>(conn, <span class="st">"Species"</span>)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>species_db</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -531,10 +544,10 @@ LIMIT 3</code></pre>
 # Database: DuckDB v0.9.2 [unknown@Linux 6.5.0-1015-azure:R 4.3.3/./data/bird_database.duckdb]
   Relevance                                num_species
   &lt;chr&gt;                                          &lt;dbl&gt;
-1 Potential predator (eggs; mammal)                  2
-2 Microtine (alternate prey for predators)           5
-3 Study species                                     41
-4 Incidental monitoring                             18
+1 Incidental monitoring                             18
+2 Potential predator (eggs; mammal)                  2
+3 Microtine (alternate prey for predators)           5
+4 Study species                                     41
 5 Potential predator (avian)                        25
 6 Potential predator (mammal)                        6
 7 Study species; potential predator (eggs)           2</code></pre>
@@ -588,13 +601,24 @@ FROM Species
 LIMIT 6</code></pre>
 </div>
 </div>
-<div class="warning">
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>Limitation: no way to add or update data in the database, <code>dbplyr</code> is view only. If you want to add or update data, you’ll need to use the <code>DBI</code> package functions.</p>
 </div>
+</div>
 </section>
-<section id="average-egg-volume-1" class="level4">
-<h4 class="anchored" data-anchor-id="average-egg-volume-1">Average egg volume</h4>
-<p>Calculating the average bird eggs volume per species directly on the database</p>
+</section>
+<section id="average-egg-volume-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="average-egg-volume-analysis">Average egg volume analysis</h3>
+<p>Let’s reproduce the egg volume analysis we just did. We can calculate the average bird eggs volume per species directly on the database</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading all the necessary tables</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>eggs_db <span class="ot">&lt;-</span> <span class="fu">tbl</span>(conn, <span class="st">"Bird_eggs"</span>)</span>
@@ -602,19 +626,21 @@ LIMIT 6</code></pre>
 </div>
 <p>Compute the volume:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>eggs_area_db <span class="ot">&lt;-</span> eggs_db <span class="sc">%&gt;%</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">egg_volume =</span> pi<span class="sc">/</span><span class="dv">6</span><span class="sc">*</span>Width<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>Length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the egg volume</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>eggs_area_db <span class="ot">&lt;-</span> eggs_db <span class="sc">%&gt;%</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">egg_volume =</span> pi<span class="sc">/</span><span class="dv">6</span><span class="sc">*</span>Width<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>Length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now let’s join this information to the nest table, and average by species</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>species_egg_volume_avg_db <span class="ot">&lt;-</span> <span class="fu">left_join</span>(nests_db, eggs_area_db, <span class="at">by=</span><span class="st">"Nest_ID"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Species) <span class="sc">%&gt;%</span></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">egg_volume_avg =</span> <span class="fu">mean</span>(egg_volume, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(egg_volume_avg)) <span class="sc">%&gt;%</span> </span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>species_egg_volume_avg_db</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Join the egg and nest tables to compute average</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>species_egg_volume_avg_db <span class="ot">&lt;-</span> <span class="fu">left_join</span>(nests_db, eggs_area_db, <span class="at">by=</span><span class="st">"Nest_ID"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Species) <span class="sc">%&gt;%</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">egg_volume_avg =</span> <span class="fu">mean</span>(egg_volume, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(egg_volume_avg)) <span class="sc">%&gt;%</span> </span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>species_egg_volume_avg_db</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 7 × 2
   Species egg_volume_avg
@@ -628,6 +654,7 @@ LIMIT 6</code></pre>
 7 reph             8444.</code></pre>
 </div>
 </div>
+<p>What does this SQL quert looks like?</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>species_egg_volume_avg_db <span class="ot">&lt;-</span> <span class="fu">left_join</span>(nests_db, eggs_area_db, <span class="at">by=</span><span class="st">"Nest_ID"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Species) <span class="sc">%&gt;%</span></span>
@@ -670,10 +697,19 @@ GROUP BY Species
 ORDER BY egg_volume_avg DESC</code></pre>
 </div>
 </div>
-<div class="note">
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>Why does the SQL query include the volume computation?</p>
 </div>
-</section>
+</div>
 </section>
 <section id="disconnecting-from-the-database" class="level3">
 <h3 class="anchored" data-anchor-id="disconnecting-from-the-database">Disconnecting from the database</h3>
