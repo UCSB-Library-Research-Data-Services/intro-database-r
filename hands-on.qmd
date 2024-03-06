@@ -290,7 +290,9 @@ DBI::dbDisconnect(conn, shutdown = TRUE)
 
 ## How did we create this database
 
-You might be wondering, how we created this database from our csv files. Most databases have some function to help you import csv files into databases. Note that since there is not data modeling (does not have to be normalized or tidy) constraints nor data type constraints a lot things can go wrong. This is a great opportunity to implement a QA/QC on your data and help you to keep clean and tidy moving forward as new data are collected.  As an example, here's 
+You might be wondering how we created this database from our csv files. Most databases provide functions to import data from csv and other types of files. It is also possible to load data into the database programmatically from within R, one row at a time, using insert statements, but it is more common to load data from csv files.  Note that since there is little data modeling within a csv file (the data does not have to be normalized or tidy), and no data type or value constraints can be enforced, a lot things can go wrong. Putting data in a database is thus a great opportunity to implement QA/QC and help you keep your data clean and tidy moving forward as new data are collected.
+
+To look at one example, below is the SQL code that was used to create the `Bird_eggs` table:
 
 ```{sql eval=FALSE}
 CREATE TABLE Bird_eggs (
@@ -309,11 +311,11 @@ CREATE TABLE Bird_eggs (
 COPY Bird_eggs FROM 'ASDN_Bird_eggs.csv' (header TRUE);
 ```
 
-DuckDB's `COPY` SQL command reads a csv file into a database table.  Had we not already created the table in the previous statement, DuckDB would have created a table automatically and guessed at column names and data types.  But by explicitly declaring the table, we are able to better characterize the data.  Notable in the above:
+DuckDB's `COPY` SQL command reads a csv file into a database table.  Had we not already created the table in the previous statement, DuckDB would have created it automatically and guessed at column names and data types.  But by explicitly declaring the table, we are able to add more characterization to the data.  Notable in the above:
 
 - `NOT NULL` indicates that missing values are not allowed.
-- Constraints (e.g., `Egg_num BETWEEN 1 and 20`) express expectations about the data and either.
+- Constraints (e.g., `Egg_num BETWEEN 1 and 20`) express our expectations about the data.
 - A `FOREIGN KEY` declares that a value must refer to an existing value in another table, i.e., it must be a reference.
 - A `PRIMARY KEY` identifies a quantity that should be unique within each row, and that serves as a row identifier.
 
-Understand that a table declaration serves as documentation, the database actually 
+Understand that a table declaration serves as more than documentation; the database actually enforces constraints.
