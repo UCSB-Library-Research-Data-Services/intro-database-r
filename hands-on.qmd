@@ -169,7 +169,7 @@ species_db %>%
 
 :::{.callout-note}
 ## Note
-Note that those are **not** data frames but tables. What `dbplyr` is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL code to query the database, retrieving results, etc.
+_Note that those are **not** data frames but tables. What `dbplyr` is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL code to query the database, retrieving results, etc._
 :::
 
 #### How can I get a "real" data frame?
@@ -250,7 +250,7 @@ eggs_area_db <- eggs_db %>%
 ```
 
 :::{.callout-caution}
-***Limitation: no way to add or update data in the database, `dbplyr` is view only. If you want to add or update data, you'll need to use the `DBI` package functions.***
+_Limitation: no way to add or update data in the database, `dbplyr` is view only. If you want to add or update data, you'll need to use the `DBI` package functions._
 :::
 
 
