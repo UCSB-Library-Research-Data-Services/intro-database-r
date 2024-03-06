@@ -157,6 +157,8 @@ species_db <- tbl(conn, "Species")
 species_db
 ```
 
+You can filter the data and select columns:
+
 ```{r}
 species_db %>%
   filter(Relevance=="Study species") %>%
@@ -165,9 +167,12 @@ species_db %>%
   head(3)
 ```
 
-Note that those are not data frames but tables. What `dbplyr` is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL code to query the database, retrieving results, etc.
+:::{.callout-note}
+## Note
+Note that those are **not** data frames but tables. What `dbplyr` is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL code to query the database, retrieving results, etc.
+:::
 
-#### How can I get a "real data frame?"
+#### How can I get a "real" data frame?
 
 You add `collect()` to your query.
 
@@ -180,9 +185,11 @@ species_db %>%
   collect()
 ```
 
-Note it means the full query is going to be ran and save in your environment. This might slow things down so you generally want to collect on the smallest data frame you can
+Note it means the full query is going to be ran and save in your R environment. This might slow things down, so you generally want to collect on the smallest data frame you can.
 
-#### How can you see the SQL query equivalent to the tidyverse code? => `show_query()`
+#### How can you see the SQL query?
+
+Adding `show_query()` at the end of your code block will let you see the SQL code that has been used to query the database.
 
 ```{r}
 # Add show_query() to the end to see what SQL it is sending!
@@ -203,6 +210,7 @@ Here is how you could run the query using the SQL code directly:
 dbGetQuery(conn, "SELECT Scientific_name FROM Species WHERE (Relevance = 'Study species') ORDER BY Scientific_name LIMIT 3")
 ```
 
+
 You can do pretty much anything with these quasi-tables, including grouping, summarization, joins, etc.
 
 Let's count how many species there are per Relevance categories:
@@ -221,6 +229,7 @@ species_db %>%
   summarize(num_species = n()) %>%
   show_query()
 ```
+
 You can also create new columns using mutate:
 
 ```{r}
@@ -228,6 +237,7 @@ species_db %>%
   mutate(Code = paste("X", Code)) %>%
   head()
 ```
+
 How does the query looks like?
 
 ```{r}
@@ -236,13 +246,14 @@ species_db %>%
   head() %>%
   show_query()
 ```
+
 :::{.callout-caution}
-****Limitation: no way to add or update data in the database, `dbplyr` is view only. If you want to add or update data, you'll need to use the `DBI` package functions.***
+***Limitation: no way to add or update data in the database, `dbplyr` is view only. If you want to add or update data, you'll need to use the `DBI` package functions.***
 :::
 
 ### Average egg volume analysis
 
-Let's reproduce the egg volume analysis we just did. We can calculate the average bird eggs volume per species directly on the database
+Let's reproduce the egg volume analysis we just did. We can calculate the average bird eggs volume per species directly on the database:
 
 ```{r}
 # loading all the necessary tables
@@ -250,7 +261,7 @@ eggs_db <- tbl(conn, "Bird_eggs")
 nests_db <- tbl(conn, "Bird_nests")
 ```
 
-Compute the volume:
+Compute the volume using the same code as previously!!
 
 ```{r}
 # Compute the egg volume
@@ -272,7 +283,7 @@ species_egg_volume_avg_db <- left_join(nests_db, eggs_area_db, by="Nest_ID") %>%
 species_egg_volume_avg_db
 ```
 
-What does this SQL quert looks like?
+What does this SQL query looks like?
 
 ```{r}
 species_egg_volume_avg_db <- left_join(nests_db, eggs_area_db, by="Nest_ID") %>%
