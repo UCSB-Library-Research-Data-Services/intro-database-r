@@ -463,6 +463,7 @@ $ ageMethod  &lt;chr&gt; NA, NA, "float", "float", "float", "float", "float", "f
 # ℹ more rows</code></pre>
 </div>
 </div>
+<p>You can filter the data and select columns:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>species_db <span class="sc">%&gt;%</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Relevance<span class="sc">==</span><span class="st">"Study species"</span>) <span class="sc">%&gt;%</span></span>
@@ -480,9 +481,21 @@ $ ageMethod  &lt;chr&gt; NA, NA, "float", "float", "float", "float", "float", "f
 3 Calidris alba     </code></pre>
 </div>
 </div>
-<p>Note that those are not data frames but tables. What <code>dbplyr</code> is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL code to query the database, retrieving results, etc.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Note that those are <strong>not</strong> data frames but tables. What <code>dbplyr</code> is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL code to query the database, retrieving results, etc.</p>
+</div>
+</div>
 <section id="how-can-i-get-a-real-data-frame" class="level4">
-<h4 class="anchored" data-anchor-id="how-can-i-get-a-real-data-frame">How can I get a “real data frame?”</h4>
+<h4 class="anchored" data-anchor-id="how-can-i-get-a-real-data-frame">How can I get a “real” data frame?</h4>
 <p>You add <code>collect()</code> to your query.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>species_db <span class="sc">%&gt;%</span></span>
@@ -500,10 +513,11 @@ $ ageMethod  &lt;chr&gt; NA, NA, "float", "float", "float", "float", "float", "f
 3 Calidris alba     </code></pre>
 </div>
 </div>
-<p>Note it means the full query is going to be ran and save in your environment. This might slow things down so you generally want to collect on the smallest data frame you can</p>
+<p>Note it means the full query is going to be ran and save in your R environment. This might slow things down, so you generally want to collect on the smallest data frame you can.</p>
 </section>
-<section id="how-can-you-see-the-sql-query-equivalent-to-the-tidyverse-code-show_query" class="level4">
-<h4 class="anchored" data-anchor-id="how-can-you-see-the-sql-query-equivalent-to-the-tidyverse-code-show_query">How can you see the SQL query equivalent to the tidyverse code? =&gt; <code>show_query()</code></h4>
+<section id="how-can-you-see-the-sql-query" class="level4">
+<h4 class="anchored" data-anchor-id="how-can-you-see-the-sql-query">How can you see the SQL query?</h4>
+<p>Adding <code>show_query()</code> at the end of your code block will let you see the SQL code that has been used to query the database.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add show_query() to the end to see what SQL it is sending!</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>species_db <span class="sc">%&gt;%</span></span>
@@ -545,12 +559,12 @@ LIMIT 3</code></pre>
   Relevance                                num_species
   &lt;chr&gt;                                          &lt;dbl&gt;
 1 Incidental monitoring                             18
-2 Potential predator (eggs; mammal)                  2
-3 Microtine (alternate prey for predators)           5
-4 Study species                                     41
-5 Potential predator (avian)                        25
-6 Potential predator (mammal)                        6
-7 Study species; potential predator (eggs)           2</code></pre>
+2 Study species                                     41
+3 Potential predator (avian)                        25
+4 Potential predator (mammal)                        6
+5 Study species; potential predator (eggs)           2
+6 Potential predator (eggs; mammal)                  2
+7 Microtine (alternate prey for predators)           5</code></pre>
 </div>
 </div>
 <p>Does that code looks familiar? But this time, here is really the query that was used to retrieve this information:</p>
@@ -611,20 +625,20 @@ Caution
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>****Limitation: no way to add or update data in the database, <code>dbplyr</code> is view only. If you want to add or update data, you’ll need to use the <code>DBI</code> package functions.***</p>
+<p><strong><em>Limitation: no way to add or update data in the database, <code>dbplyr</code> is view only. If you want to add or update data, you’ll need to use the <code>DBI</code> package functions.</em></strong></p>
 </div>
 </div>
 </section>
 </section>
 <section id="average-egg-volume-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="average-egg-volume-analysis">Average egg volume analysis</h3>
-<p>Let’s reproduce the egg volume analysis we just did. We can calculate the average bird eggs volume per species directly on the database</p>
+<p>Let’s reproduce the egg volume analysis we just did. We can calculate the average bird eggs volume per species directly on the database:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading all the necessary tables</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>eggs_db <span class="ot">&lt;-</span> <span class="fu">tbl</span>(conn, <span class="st">"Bird_eggs"</span>)</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>nests_db <span class="ot">&lt;-</span> <span class="fu">tbl</span>(conn, <span class="st">"Bird_nests"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Compute the volume:</p>
+<p>Compute the volume using the same code as previously!!</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the egg volume</span></span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>eggs_area_db <span class="ot">&lt;-</span> eggs_db <span class="sc">%&gt;%</span></span>
@@ -654,7 +668,7 @@ Caution
 7 reph             8444.</code></pre>
 </div>
 </div>
-<p>What does this SQL quert looks like?</p>
+<p>What does this SQL query looks like?</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>species_egg_volume_avg_db <span class="ot">&lt;-</span> <span class="fu">left_join</span>(nests_db, eggs_area_db, <span class="at">by=</span><span class="st">"Nest_ID"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Species) <span class="sc">%&gt;%</span></span>
