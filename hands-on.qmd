@@ -187,6 +187,7 @@ species_db %>%
 
 Note it means the full query is going to be ran and save in your R environment. This might slow things down, so you generally want to collect on the smallest data frame you can.
 
+
 #### How can you see the SQL query?
 
 Adding `show_query()` at the end of your code block will let you see the SQL code that has been used to query the database.
@@ -210,7 +211,6 @@ Here is how you could run the query using the SQL code directly:
 dbGetQuery(conn, "SELECT Scientific_name FROM Species WHERE (Relevance = 'Study species') ORDER BY Scientific_name LIMIT 3")
 ```
 
-
 You can do pretty much anything with these quasi-tables, including grouping, summarization, joins, etc.
 
 Let's count how many species there are per Relevance categories:
@@ -230,26 +230,6 @@ species_db %>%
   show_query()
 ```
 
-You can also create new columns using mutate:
-
-```{r}
-species_db %>%
-  mutate(Code = paste("X", Code)) %>%
-  head()
-```
-
-How does the query looks like?
-
-```{r}
-species_db %>%
-  mutate(Code = paste("X", Code)) %>%
-  head() %>%
-  show_query()
-```
-
-:::{.callout-caution}
-***Limitation: no way to add or update data in the database, `dbplyr` is view only. If you want to add or update data, you'll need to use the `DBI` package functions.***
-:::
 
 ### Average egg volume analysis
 
@@ -261,13 +241,18 @@ eggs_db <- tbl(conn, "Bird_eggs")
 nests_db <- tbl(conn, "Bird_nests")
 ```
 
-Compute the volume using the same code as previously!!
+Compute the volume using the same code as previously!! Yes, you can use mutate to create new columns on the tables object
 
 ```{r}
 # Compute the egg volume
 eggs_area_db <- eggs_db %>%
   mutate(egg_volume = pi/6*Width^2*Length)
 ```
+
+:::{.callout-caution}
+***Limitation: no way to add or update data in the database, `dbplyr` is view only. If you want to add or update data, you'll need to use the `DBI` package functions.***
+:::
+
 
 Now let's join this information to the nest table, and average by species
 
