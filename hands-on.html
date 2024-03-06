@@ -231,14 +231,6 @@ window.Quarto = {
 </header>
 
 
-<p>Loading the necessary packages. DuckDB has its own R package that is mostly a wrapper around dbplyr and DBI</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dbplyr)       <span class="co"># to query databases in a tidyverse style manner</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)          <span class="co"># to connect to databases</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("duckdb")  # install this package to get duckDB API</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)       <span class="co"># Specific to duckDB</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <section id="the-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="the-dataset">The dataset</h2>
 <p>ARCTIC SHOREBIRD DEMOGRAPHICS NETWORK <a href="https://doi.org/10.18739/A2222R68W" target="_blank">https://doi.org/10.18739/A2222R68W</a></p>
@@ -255,7 +247,15 @@ window.Quarto = {
 </section>
 <section id="analyzing-the-bird-dataset-using-csv-files-raw-data" class="level2">
 <h2 class="anchored" data-anchor-id="analyzing-the-bird-dataset-using-csv-files-raw-data">Analyzing the bird dataset using csv files (raw data)</h2>
-<p>Let us import the csv files with the bird species information:</p>
+<p>Loading the necessary packages. DuckDB has its own R package that is mostly a wrapper around dbplyr and DBI.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dbplyr)       <span class="co"># to query databases in a tidyverse style manner</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)          <span class="co"># to connect to databases</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("duckdb")  # install this package to get duckDB API</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)       <span class="co"># Specific to duckDB</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Import the csv files with the bird species information:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import the species</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>species_csv <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/species.csv"</span>)</span>
@@ -327,7 +327,7 @@ Analysis
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>We would like to know what is the average egg size for each of those bird species. How would we do that?</p>
+<p><strong><em>We would like to know what is the average egg size for each of those bird species. How would we do that?</em></strong></p>
 </div>
 </div>
 <p>We will need more information that what we have in our species table. Actually we will need to also retrieve information from the nests and eggs monitoring table.</p>
@@ -547,10 +547,10 @@ LIMIT 3</code></pre>
 1 Incidental monitoring                             18
 2 Potential predator (eggs; mammal)                  2
 3 Microtine (alternate prey for predators)           5
-4 Potential predator (avian)                        25
-5 Potential predator (mammal)                        6
-6 Study species; potential predator (eggs)           2
-7 Study species                                     41</code></pre>
+4 Study species                                     41
+5 Potential predator (avian)                        25
+6 Potential predator (mammal)                        6
+7 Study species; potential predator (eggs)           2</code></pre>
 </div>
 </div>
 <p>Does that code looks familiar? But this time, here is really the query that was used to retrieve this information:</p>
@@ -611,7 +611,7 @@ Caution
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Limitation: no way to add or update data in the database, <code>dbplyr</code> is view only. If you want to add or update data, you’ll need to use the <code>DBI</code> package functions.</p>
+<p>****Limitation: no way to add or update data in the database, <code>dbplyr</code> is view only. If you want to add or update data, you’ll need to use the <code>DBI</code> package functions.***</p>
 </div>
 </div>
 </section>
@@ -707,7 +707,7 @@ Question
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Why does the SQL query include the volume computation?</p>
+<p><strong><em>Why does the SQL query include the volume computation?</em></strong></p>
 </div>
 </div>
 </section>
