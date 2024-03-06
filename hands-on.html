@@ -533,11 +533,11 @@ LIMIT 3</code></pre>
   &lt;chr&gt;                                          &lt;dbl&gt;
 1 Potential predator (eggs; mammal)                  2
 2 Microtine (alternate prey for predators)           5
-3 Incidental monitoring                             18
-4 Potential predator (avian)                        25
-5 Potential predator (mammal)                        6
-6 Study species; potential predator (eggs)           2
-7 Study species                                     41</code></pre>
+3 Study species                                     41
+4 Incidental monitoring                             18
+5 Potential predator (avian)                        25
+6 Potential predator (mammal)                        6
+7 Study species; potential predator (eggs)           2</code></pre>
 </div>
 </div>
 <p>Does that code looks familiar? But this time, here is really the query that was used to retrieve this information:</p>
@@ -685,7 +685,8 @@ ORDER BY egg_volume_avg DESC</code></pre>
 </section>
 <section id="how-did-we-create-this-database" class="level2">
 <h2 class="anchored" data-anchor-id="how-did-we-create-this-database">How did we create this database</h2>
-<p>You might be wondering, how we created this database from our csv files. Most databases have some function to help you import csv files into databases. Note that since there is not data modeling (does not have to be normalized or tidy) constraints nor data type constraints a lot things can go wrong. This is a great opportunity to implement a QA/QC on your data and help you to keep clean and tidy moving forward as new data are collected. As an example, here’s</p>
+<p>You might be wondering how we created this database from our csv files. Most databases provide functions to import data from csv and other types of files. It is also possible to load data into the database programmatically from within R, one row at a time, using insert statements, but it is more common to load data from csv files. Note that since there is little data modeling within a csv file (the data does not have to be normalized or tidy), and no data type or value constraints can be enforced, a lot things can go wrong. Putting data in a database is thus a great opportunity to implement QA/QC and help you keep your data clean and tidy moving forward as new data are collected.</p>
+<p>To look at one example, below is the SQL code that was used to create the <code>Bird_eggs</code> table:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> Bird_eggs (</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    Book_page <span class="dt">VARCHAR</span>,</span>
@@ -702,14 +703,14 @@ ORDER BY egg_volume_avg DESC</code></pre>
 <span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> Bird_eggs <span class="kw">FROM</span> <span class="st">'ASDN_Bird_eggs.csv'</span> (<span class="kw">header</span> <span class="kw">TRUE</span>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>DuckDB’s <code>COPY</code> SQL command reads a csv file into a database table. Had we not already created the table in the previous statement, DuckDB would have created a table automatically and guessed at column names and data types. But by explicitly declaring the table, we are able to better characterize the data. Notable in the above:</p>
+<p>DuckDB’s <code>COPY</code> SQL command reads a csv file into a database table. Had we not already created the table in the previous statement, DuckDB would have created it automatically and guessed at column names and data types. But by explicitly declaring the table, we are able to add more characterization to the data. Notable in the above:</p>
 <ul>
 <li><code>NOT NULL</code> indicates that missing values are not allowed.</li>
-<li>Constraints (e.g., <code>Egg_num BETWEEN 1 and 20</code>) express expectations about the data and either.</li>
+<li>Constraints (e.g., <code>Egg_num BETWEEN 1 and 20</code>) express our expectations about the data.</li>
 <li>A <code>FOREIGN KEY</code> declares that a value must refer to an existing value in another table, i.e., it must be a reference.</li>
 <li>A <code>PRIMARY KEY</code> identifies a quantity that should be unique within each row, and that serves as a row identifier.</li>
 </ul>
-<p>Understand that a table declaration serves as documentation, the database actually</p>
+<p>Understand that a table declaration serves as more than documentation; the database actually enforces constraints.</p>
 
 
 </section>
