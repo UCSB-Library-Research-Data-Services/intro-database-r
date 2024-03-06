@@ -4,18 +4,6 @@ execute:
   warning: false
 ---
 
-Loading the necessary packages. DuckDB has its own R package that is mostly a wrapper around dbplyr and DBI
-
-```{r}
-#| message: false  
-  
-library(tidyverse)
-library(dbplyr)       # to query databases in a tidyverse style manner
-library(DBI)          # to connect to databases
-# install.packages("duckdb")  # install this package to get duckDB API
-library(duckdb)       # Specific to duckDB
-```
-
 ## The dataset
 
 ARCTIC SHOREBIRD DEMOGRAPHICS NETWORK [https://doi.org/10.18739/A2222R68W](https://doi.org/10.18739/A2222R68W){target="_blank"}
@@ -33,7 +21,19 @@ See `01_ASDN_Readme.txt` provided in the `data` folder for full metadata informa
 
 ## Analyzing the bird dataset using csv files (raw data)
 
-Let us import the csv files with the bird species information:
+Loading the necessary packages. DuckDB has its own R package that is mostly a wrapper around dbplyr and DBI.
+
+```{r}
+#| message: false  
+  
+library(tidyverse)
+library(dbplyr)       # to query databases in a tidyverse style manner
+library(DBI)          # to connect to databases
+# install.packages("duckdb")  # install this package to get duckDB API
+library(duckdb)       # Specific to duckDB
+```
+
+Import the csv files with the bird species information:
 
 ```{r}
 # Import the species
@@ -68,7 +68,7 @@ species_study
 
 :::{.callout-tip}
 ## Analysis
-We would like to know what is the average egg size for each of those bird species. How would we do that?
+***We would like to know what is the average egg size for each of those bird species. How would we do that?***
 :::
 
 We will need more information that what we have in our species table. Actually we will need to also retrieve information from the nests and eggs monitoring table.
@@ -237,7 +237,7 @@ species_db %>%
   show_query()
 ```
 :::{.callout-caution}
-Limitation: no way to add or update data in the database, `dbplyr` is view only. If you want to add or update data, you'll need to use the `DBI` package functions.
+****Limitation: no way to add or update data in the database, `dbplyr` is view only. If you want to add or update data, you'll need to use the `DBI` package functions.***
 :::
 
 ### Average egg volume analysis
@@ -284,7 +284,7 @@ species_egg_volume_avg_db <- left_join(nests_db, eggs_area_db, by="Nest_ID") %>%
 
 :::{.callout-note}
 ## Question
-Why does the SQL query include the volume computation?
+***Why does the SQL query include the volume computation?***
 :::
 
 ### Disconnecting from the database
