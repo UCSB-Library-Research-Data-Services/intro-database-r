@@ -64,9 +64,12 @@ species_study <- species_csv %>%
 species_study
 ```
 
-#### Average egg volume
+### Average egg volume
 
+:::{.callout-tip}
+## Analysis
 We would like to know what is the average egg size for each of those bird species. How would we do that?
+:::
 
 We will need more information that what we have in our species table. Actually we will need to also retrieve information from the nests and eggs monitoring table.
 
@@ -147,7 +150,7 @@ List all the tables present in the database:
 dbListTables(conn)
 ```
 
-### Let's try to reproduce the analaysis we just did
+Let's have a look at the Species table
 
 ```{r}
 species_db <- tbl(conn, "Species")
@@ -233,13 +236,13 @@ species_db %>%
   head() %>%
   show_query()
 ```
-:::warning
+:::{.callout-caution}
 Limitation: no way to add or update data in the database, `dbplyr` is view only. If you want to add or update data, you'll need to use the `DBI` package functions.
 :::
 
-#### Average egg volume
+### Average egg volume analysis
 
-Calculating the average bird eggs volume per species directly on the database
+Let's reproduce the egg volume analysis we just did. We can calculate the average bird eggs volume per species directly on the database
 
 ```{r}
 # loading all the necessary tables
@@ -250,6 +253,7 @@ nests_db <- tbl(conn, "Bird_nests")
 Compute the volume:
 
 ```{r}
+# Compute the egg volume
 eggs_area_db <- eggs_db %>%
   mutate(egg_volume = pi/6*Width^2*Length)
 ```
@@ -257,6 +261,7 @@ eggs_area_db <- eggs_db %>%
 Now let's join this information to the nest table, and average by species
 
 ```{r}
+# Join the egg and nest tables to compute average
 species_egg_volume_avg_db <- left_join(nests_db, eggs_area_db, by="Nest_ID") %>%
   group_by(Species) %>%
   summarise(egg_volume_avg = mean(egg_volume, na.rm = TRUE)) %>%
@@ -267,6 +272,8 @@ species_egg_volume_avg_db <- left_join(nests_db, eggs_area_db, by="Nest_ID") %>%
 species_egg_volume_avg_db
 ```
 
+What does this SQL quert looks like?
+
 ```{r}
 species_egg_volume_avg_db <- left_join(nests_db, eggs_area_db, by="Nest_ID") %>%
   group_by(Species) %>%
@@ -275,7 +282,8 @@ species_egg_volume_avg_db <- left_join(nests_db, eggs_area_db, by="Nest_ID") %>%
   show_query()
 ```
 
-:::note
+:::{.callout-note}
+## Question
 Why does the SQL query include the volume computation?
 :::
 
