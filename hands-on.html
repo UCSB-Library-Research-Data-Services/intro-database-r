@@ -491,7 +491,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Note that those are <strong>not</strong> data frames but tables. What <code>dbplyr</code> is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL code to query the database, retrieving results, etc.</p>
+<p><em>Note that those are <strong>not</strong> data frames but tables. What <code>dbplyr</code> is actually doing behind the scenes is translating all those dplyr operations into SQL, sending the SQL code to query the database, retrieving results, etc.</em></p>
 </div>
 </div>
 <section id="how-can-i-get-a-real-data-frame" class="level4">
@@ -561,10 +561,10 @@ LIMIT 3</code></pre>
 1 Incidental monitoring                             18
 2 Potential predator (eggs; mammal)                  2
 3 Microtine (alternate prey for predators)           5
-4 Potential predator (avian)                        25
-5 Potential predator (mammal)                        6
-6 Study species; potential predator (eggs)           2
-7 Study species                                     41</code></pre>
+4 Study species                                     41
+5 Potential predator (avian)                        25
+6 Potential predator (mammal)                        6
+7 Study species; potential predator (eggs)           2</code></pre>
 </div>
 </div>
 <p>Does that code looks familiar? But this time, here is really the query that was used to retrieve this information:</p>
@@ -606,7 +606,7 @@ Caution
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong><em>Limitation: no way to add or update data in the database, <code>dbplyr</code> is view only. If you want to add or update data, you’ll need to use the <code>DBI</code> package functions.</em></strong></p>
+<p><em>Limitation: no way to add or update data in the database, <code>dbplyr</code> is view only. If you want to add or update data, you’ll need to use the <code>DBI</code> package functions.</em></p>
 </div>
 </div>
 <p>Now let’s join this information to the nest table, and average by species</p>
