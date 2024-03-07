@@ -27,10 +27,6 @@ Loading the necessary packages. DuckDB has its own R package that is mostly a wr
 #| message: false  
   
 library(tidyverse)
-library(dbplyr)       # to query databases in a tidyverse style manner
-library(DBI)          # to connect to databases
-# install.packages("duckdb")  # install this package to get duckDB API
-library(duckdb)       # Specific to duckDB
 ```
 
 Import the csv files with the bird species information:
@@ -108,14 +104,14 @@ Where W is the width and L the length of the egg
 We can use mutate to do so:
 
 ```{r}
-eggs_area_df <- eggs_csv %>%
+eggs_volume_df <- eggs_csv %>%
   mutate(egg_volume = pi/6*Width^2*Length)
 ```
 
 Now let's join this information to the nest table, and average by species
 
 ```{r}
-species_egg_volume_avg <- left_join(nests_csv, eggs_area_df, by="Nest_ID") %>%
+species_egg_volume_avg <- left_join(eggs_volume_df, nests_csv, by="Nest_ID") %>%
   group_by(Species) %>%
   summarise(egg_volume_avg = mean(egg_volume, na.rm = TRUE)) %>%
   arrange(desc(egg_volume_avg)) %>%
@@ -127,14 +123,23 @@ species_egg_volume_avg
 Ideally we would like the scientific names...
 
 ```{r}
-species_egg_area_avg <- species_study %>%
+species_egg_vol_avg <- species_study %>%
   inner_join(species_egg_volume_avg, by = join_by(Code == Species)) 
 
-species_egg_area_avg
+species_egg_vol_avg
 ```
 
 
 ## Let's connect to our first database
+
+```{r}
+#| message: false  
+  
+library(dbplyr)       # to query databases in a tidyverse style manner
+library(DBI)          # to connect to databases
+# install.packages("duckdb")  # install this package to get duckDB API
+library(duckdb)       # Specific to duckDB
+```
 
 ### Load the bird database
 
@@ -245,7 +250,7 @@ Compute the volume using the same code as previously!! Yes, you can use mutate t
 
 ```{r}
 # Compute the egg volume
-eggs_area_db <- eggs_db %>%
+eggs_volume_db <- eggs_db %>%
   mutate(egg_volume = pi/6*Width^2*Length)
 ```
 
@@ -258,7 +263,7 @@ Now let's join this information to the nest table, and average by species
 
 ```{r}
 # Join the egg and nest tables to compute average
-species_egg_volume_avg_db <- left_join(nests_db, eggs_area_db, by="Nest_ID") %>%
+species_egg_volume_avg_db <- left_join(nests_db, eggs_volume_db, by="Nest_ID") %>%
   group_by(Species) %>%
   summarise(egg_volume_avg = mean(egg_volume, na.rm = TRUE)) %>%
   arrange(desc(egg_volume_avg)) %>% 
@@ -271,7 +276,7 @@ species_egg_volume_avg_db
 What does this SQL query looks like?
 
 ```{r}
-species_egg_volume_avg_db <- left_join(nests_db, eggs_area_db, by="Nest_ID") %>%
+species_egg_volume_avg_db <- left_join(eggs_volume_db, nests_db, by="Nest_ID") %>%
   group_by(Species) %>%
   summarise(egg_volume_avg = mean(egg_volume, na.rm = TRUE)) %>%
   arrange(desc(egg_volume_avg)) %>% 

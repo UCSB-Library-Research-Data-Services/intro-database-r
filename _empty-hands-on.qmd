@@ -27,10 +27,7 @@ Loading the necessary packages. DuckDB has its own R package that is mostly a wr
 #| message: false  
   
 library(tidyverse)
-library(dbplyr)       # to query databases in a tidyverse style manner
-library(DBI)          # to connect to databases
-# install.packages("duckdb")  # install this package to get duckDB API
-library(duckdb)       # Specific to duckDB
+
 ```
 
 Import the csv files with the bird species information:
@@ -112,6 +109,15 @@ Ideally we would like the scientific names...
 
 
 ## Let's connect to our first database
+
+```{r}
+#| message: false  
+  
+library(dbplyr)       # to query databases in a tidyverse style manner
+library(DBI)          # to connect to databases
+# install.packages("duckdb")  # install this package to get duckDB API
+library(duckdb)       # Specific to duckDB
+```
 
 ### Load the bird database
 
