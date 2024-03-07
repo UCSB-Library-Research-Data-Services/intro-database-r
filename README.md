@@ -16,7 +16,7 @@ This workshop will cover these main points:
 
 ### Workshop structure
 
-- 15min [presentation](https://docs.google.com/presentation/d/e/2PACX-1vT7o0wgBzGhMl0XR0N7bDy4z5FWklfD3p4OkRGCRKcRZRJDTgO7T9b7rDp1amzPAYlrIuTsZ5sSp9BL/pub?start=false&loop=false&delayms=10000) on databases and data modelling
+- 15min [presentation](https://docs.google.com/presentation/d/e/2PACX-1vT7o0wgBzGhMl0XR0N7bDy4z5FWklfD3p4OkRGCRKcRZRJDTgO7T9b7rDp1amzPAYlrIuTsZ5sSp9BL/pub?start=false&loop=false&delayms=10000){target="_blank"} on databases and data modelling
 - Hands-on [coding session](https://ucsb-library-research-data-services.github.io/intro-database-r/hands-on.html)
 
 
