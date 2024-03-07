@@ -146,7 +146,7 @@ library(duckdb)       # Specific to duckDB
 This database has been built from the csv files we just analyzed, so the data should be very similar - note we did not say identical more on this in the last section:
 
 ```{r}
-conn <- dbConnect(duckdb::duckdb(), dbdir = "./data/bird_database.duckdb", read_only = FALSE)
+conn <- dbConnect(duckdb::duckdb(), dbdir = "./data/bird_database.duckdb")
 ```
 
 List all the tables present in the database:
