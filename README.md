@@ -5,7 +5,9 @@ When: 7th March 2024, 1700-1830 UTC  (convert to local time)
 
 Where: Register to receive the Zoom link: https://events.humanitix.com/integrating-sql-into-r-analytical-workflows-using-dbplyr
 
-Summary: In this workshop, we will discuss why you might consider a relational database to store environmental data. We will go over how to insert data in and retrieve data from a database using R and duckDB](https://duckdb.org/). We will focus on how to use the R [dbplyr](https://dbplyr.tidyverse.org/) package to integrate databases into tidyverse-focused analytical workflows.
+### Summary
+
+In this workshop, we will discuss why you might consider a relational database to store environmental data. We will go over how to insert data in and retrieve data from a database using R and duckDB](https://duckdb.org/). We will focus on how to use the R [dbplyr](https://dbplyr.tidyverse.org/) package to integrate databases into tidyverse-focused analytical workflows.
 
 This workshop will cover these main points:  
 
