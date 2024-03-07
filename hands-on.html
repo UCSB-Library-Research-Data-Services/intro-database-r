@@ -433,7 +433,7 @@ $ ageMethod  &lt;chr&gt; NA, NA, "float", "float", "float", "float", "float", "f
 <h3 class="anchored" data-anchor-id="load-the-bird-database">Load the bird database</h3>
 <p>This database has been built from the csv files we just analyzed, so the data should be very similar - note we did not say identical more on this in the last section:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(duckdb<span class="sc">::</span><span class="fu">duckdb</span>(), <span class="at">dbdir =</span> <span class="st">"./data/bird_database.duckdb"</span>, <span class="at">read_only =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(duckdb<span class="sc">::</span><span class="fu">duckdb</span>(), <span class="at">dbdir =</span> <span class="st">"./data/bird_database.duckdb"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>List all the tables present in the database:</p>
 <div class="cell">
@@ -563,10 +563,10 @@ LIMIT 3</code></pre>
 1 Incidental monitoring                             18
 2 Potential predator (eggs; mammal)                  2
 3 Microtine (alternate prey for predators)           5
-4 Study species                                     41
-5 Potential predator (avian)                        25
-6 Potential predator (mammal)                        6
-7 Study species; potential predator (eggs)           2</code></pre>
+4 Potential predator (avian)                        25
+5 Potential predator (mammal)                        6
+6 Study species; potential predator (eggs)           2
+7 Study species                                     41</code></pre>
 </div>
 </div>
 <p>Does that code looks familiar? But this time, here is really the query that was used to retrieve this information:</p>
