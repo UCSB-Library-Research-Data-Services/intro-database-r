@@ -28,4 +28,4 @@ This workshop will cover these main points:
 
 ### OSF archive
 
-(Presentation PDF archive](https://osf.io/7z3kr)
+[Presentation PDF archive](https://osf.io/7z3kr)
