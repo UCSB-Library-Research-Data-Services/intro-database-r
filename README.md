@@ -24,3 +24,8 @@ This workshop will cover these main points:
 
 
 ![](img/sortee_workshop_flyer.jpg)
+
+
+### OSF archive
+
+(Presentation PDF archive](https://osf.io/7z3kr)
